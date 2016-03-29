@@ -19,7 +19,7 @@ def connect_to_fitbit():
     #print authd_client.make_request("https://api.fitbit.com/1/user/-/sleep/date/2014-09-01.json", method='GET')
 
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
-                          redirect_uri="http://0.0.0.0:2600/oauth")
+                          redirect_uri="https://nott.herokuapp.com/oauth")
     url = server.browser_authorize()
 
     print('FULL RESULTS = %s' % server.oauth.token)
@@ -30,7 +30,7 @@ def connect_to_fitbit():
 
 def fetch_access_token(state, code=None, error=None):
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
-                          redirect_uri="http://0.0.0.0:2600/oauth")
+                          redirect_uri="https://nott.herokuapp.com/oauth")
     if code:
         try:
             server.oauth.fetch_access_token(code, server.redirect_uri)
