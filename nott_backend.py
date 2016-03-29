@@ -3,7 +3,7 @@ import os
 from flask import Flask, request, redirect
 
 from database import init_db
-from services.fitbit.fitbit_api import connect_to_fitbit
+from services.fitbit.fitbit_api import connect_to_fitbit, fetch_access_token
 
 app = Flask(__name__)
 init_db()
@@ -16,8 +16,20 @@ def hello_world():
 
 @app.route('/oauth')
 def fitbit_oauth():
-    print request.args
-    print request.args['code']
+    code = None
+    state = None
+    error = None
+    if 'code' in request.args:
+        code = request.args['code']
+
+    if 'state' in request.args:
+        state = request.args['state']
+
+    if 'error' in request.args:
+        error = request.args['error']
+
+    fetch_access_token(state, code, error)
+    return "Hello oauth"
 
 
 if __name__ == '__main__':
