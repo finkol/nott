@@ -10,6 +10,7 @@ from base64 import b64encode
 from fitbit.api import FitbitOauth2Client
 from oauthlib.oauth2.rfc6749.errors import MismatchingStateError, MissingTokenError
 from requests_oauthlib import OAuth2Session
+from flask import redirect
 
 
 class OAuth2Server:
@@ -31,7 +32,9 @@ class OAuth2Server:
         """
         url, _ = self.oauth.authorize_token_url(redirect_uri=self.redirect_uri)
         # Open the web browser in a new thread for command-line browser support
-        threading.Timer(1, webbrowser.open, args=(url,)).start()
+        # threading.Timer(1, webbrowser.open, args=(url,)).start()
+        return redirect(url, code=302)
+
         #cherrypy.quickstart(self)
         #if cherrypy.engine.state == cherrypy.engine.states.STARTED:
         #    threading.Timer(1, cherrypy.engine.exit).start()
