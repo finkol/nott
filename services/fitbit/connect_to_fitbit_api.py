@@ -33,7 +33,8 @@ class OAuth2Server:
         url, _ = self.oauth.authorize_token_url(redirect_uri=self.redirect_uri)
         # Open the web browser in a new thread for command-line browser support
         # threading.Timer(1, webbrowser.open, args=(url,)).start()
-        return redirect(url, code=302)
+        return url
+        #return redirect(url, code=200)
 
         #cherrypy.quickstart(self)
         #if cherrypy.engine.state == cherrypy.engine.states.STARTED:

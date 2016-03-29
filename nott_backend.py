@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request
+from flask import Flask, request, redirect
 
 from database import init_db
 from services.fitbit.fitbit_api import connect_to_fitbit
@@ -11,8 +11,8 @@ init_db()
 
 @app.route('/')
 def hello_world():
-    connect_to_fitbit()
-    return 'Hello Nott!'
+    url = connect_to_fitbit()
+    return redirect(url)
 
 @app.route('/oauth')
 def fitbit_oauth():

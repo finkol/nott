@@ -19,9 +19,10 @@ def connect_to_fitbit():
 
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
                           redirect_uri="http://0.0.0.0:2600/oauth")
-    server.browser_authorize()
+    url = server.browser_authorize()
 
     print('FULL RESULTS = %s' % server.oauth.token)
     print('ACCESS_TOKEN = %s' % server.oauth.token['access_token'])
     print('REFRESH_TOKEN = %s' % server.oauth.token['refresh_token'])
+    return url
 
