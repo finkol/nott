@@ -16,10 +16,12 @@ init_db()
 def hello():
     return "Hello!"
 
+
 @app.route('/connect_to_fitbit')
 def connect_to_fitbit():
     url = connect_to_fitbit()
     return redirect(url)
+
 
 @app.route('/oauth')
 def fitbit_oauth():
@@ -41,7 +43,6 @@ def fitbit_oauth():
 
 @app.route('/activity', methods=['POST'])
 def post_activity():
-    print "bla"
     if 'user_name' in request.json:
         user_name = request.json.get('user_name')
     else:
