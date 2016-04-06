@@ -12,8 +12,12 @@ app = Flask(__name__)
 init_db()
 
 
-@app.route('/')
-def hello_world():
+@app.route("/")
+def hello():
+    return "Hello!"
+
+@app.route('/connect_to_fitbit')
+def connect_to_fitbit():
     url = connect_to_fitbit()
     return redirect(url)
 
