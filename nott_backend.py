@@ -1,9 +1,12 @@
 import os
 
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, jsonify
 
 from database import init_db
 from services.fitbit.fitbit_api import connect_to_fitbit, fetch_access_token
+from services.activity import log_activity
+from services.food import log_food
+from error_handling.generic_error import GenericError
 
 app = Flask(__name__)
 init_db()
@@ -30,6 +33,71 @@ def fitbit_oauth():
 
     fetch_access_token(state, code, error)
     return "Hello oauth"
+
+
+@app.route('/activity', methods=['POST'])
+def post_activity():
+    print "bla"
+    if 'user_name' in request.json:
+        user_name = request.json.get('user_name')
+    else:
+        raise GenericError("user_name not provided")
+
+    if 'activity_type' in request.json:
+        activity_type = request.json.get('activity_type')
+    else:
+        raise GenericError("activity_type not provided")
+
+    if 'start_time' in request.json:
+        start_time = request.json.get('start_time')
+    else:
+        raise GenericError("start_time not provided")
+
+    if 'end_time' in request.json:
+        end_time = request.json.get('end_time')
+
+    return jsonify(log_activity(user_name, activity_type, start_time, end_time))
+
+
+@app.route('/food', methods=['POST'])
+def post_food():
+    if 'user_name' in request.json:
+        user_name = request.json.get('user_name')
+    else:
+        raise GenericError("user_name not provided")
+
+    if 'food_type' in request.json:
+        food_type = request.json.get('food_type')
+    else:
+        raise GenericError("food_type not provided")
+
+    if 'title' in request.json:
+        title = request.json.get('title')
+    else:
+        raise GenericError("title not provided")
+
+    if 'timestamp' in request.json:
+        timestamp = request.json.get('timestamp')
+
+    if 'score' in request.json:
+        score = request.json.get('score')
+    else:
+        raise GenericError("score not provided")
+
+    if 'picture' in request.json:
+        picture = request.json.get('picture')
+
+    if 'grams' in request.json:
+        grams = request.json.get('grams')
+
+    return jsonify(log_food(user_name, food_type, title, timestamp, score, picture, grams))
+
+
+@app.errorhandler(GenericError)
+def handle_generic_error(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
 
 
 if __name__ == '__main__':
