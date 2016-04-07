@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="08f638d2-bea2-4b05-995c-85652b054719" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/models/user.py" afterPath="$PROJECT_DIR$/models/user.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/services/fitbit/fitbit_api.py" afterPath="$PROJECT_DIR$/services/fitbit/fitbit_api.py" />
     </list>
     <ignored path="nott_backend.iws" />
@@ -60,6 +61,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="sleep.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/services/sleep.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="api.py" pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/anaconda/envs/nott/lib/python2.7/site-packages/fitbit/api.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -73,8 +84,8 @@
       <file leaf-file-name="fitbit_api.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/services/fitbit/fitbit_api.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.38423645">
-              <caret line="40" column="85" selection-start-line="40" selection-start-column="85" selection-end-line="40" selection-end-column="85" />
+            <state vertical-scroll-proportion="0.43349755">
+              <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
@@ -86,7 +97,7 @@
         <entry file="file://$PROJECT_DIR$/models/user.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="23" column="63" selection-start-line="23" selection-start-column="63" selection-end-line="23" selection-end-column="63" />
+              <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
               <folding>
                 <element signature="e#0#46#0" expanded="true" />
               </folding>
@@ -144,8 +155,9 @@
         <option value="$PROJECT_DIR$/services/food.py" />
         <option value="$PROJECT_DIR$/models/food.py" />
         <option value="$PROJECT_DIR$/models/sleep.py" />
-        <option value="$PROJECT_DIR$/models/user.py" />
         <option value="$PROJECT_DIR$/nott_backend.py" />
+        <option value="$PROJECT_DIR$/services/sleep.py" />
+        <option value="$PROJECT_DIR$/models/user.py" />
         <option value="$PROJECT_DIR$/services/fitbit/fitbit_api.py" />
       </list>
     </option>
@@ -650,9 +662,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="16" column="19" selection-start-line="16" selection-start-column="19" selection-end-line="16" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#68#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -692,14 +702,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/anaconda/envs/nott/lib/python2.7/site-packages/fitbit/api.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="31" column="8" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nott_backend.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -723,7 +725,7 @@
     <entry file="file://$PROJECT_DIR$/models/user.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="23" column="63" selection-start-line="23" selection-start-column="63" selection-end-line="23" selection-end-column="63" />
+          <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
           <folding>
             <element signature="e#0#46#0" expanded="true" />
           </folding>
@@ -740,10 +742,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/services/sleep.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/anaconda/envs/nott/lib/python2.7/site-packages/fitbit/api.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="31" column="8" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/services/fitbit/fitbit_api.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.38423645">
-          <caret line="40" column="85" selection-start-line="40" selection-start-column="85" selection-end-line="40" selection-end-column="85" />
+        <state vertical-scroll-proportion="0.43349755">
+          <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
