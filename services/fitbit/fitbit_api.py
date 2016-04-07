@@ -39,7 +39,7 @@ def fetch_access_token(state, code=None, error=None):
     if code:
         try:
             access_token = server.oauth.fetch_access_token(code, server.redirect_uri)
-            user.fitbit_access_token = access_token
+            user.fitbit_access_token = str(access_token)
             #db_session.add(user)
             db_session.flush()
         except MissingTokenError:
