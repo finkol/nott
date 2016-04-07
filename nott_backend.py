@@ -38,7 +38,10 @@ def fitbit_oauth():
     if 'error' in request.args:
         error = request.args['error']
 
-    fetch_access_token(state, code, error)
+    if 'user_name' in request.args:
+        user_name = request.args['user_name']
+
+    fetch_access_token(state, code, error, user_name)
     return "Hello oauth"
 
 

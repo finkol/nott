@@ -2,6 +2,9 @@ import services.fitbit
 from services.fitbit.connect_to_fitbit_api import OAuth2Server
 from oauthlib.oauth2.rfc6749.errors import MismatchingStateError, MissingTokenError
 
+from database import db_session
+from models.user import User
+
 
 # You'll have to gather the tokens on your own, or use
 # ./gather_keys_oauth2.py
@@ -28,12 +31,16 @@ def connect_to_fitbit(user_name):
     return url
 
 
-def fetch_access_token(state, code=None, error=None):
+def fetch_access_token(state, code=None, error=None, user_name=None):
+    user = db_session.query(User).filter(User.user_name == user_name).first()
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
                           redirect_uri="https://nott.herokuapp.com/oauth")
     if code:
         try:
             access_token = server.oauth.fetch_access_token(code, server.redirect_uri)
+            user.fitbit_access_token = access_token
+            db_session.add(user)
+            db_session.flush()
         except MissingTokenError:
             print "Missing access token parameter."
             #error = self._fmt_failure(
