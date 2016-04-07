@@ -10,7 +10,7 @@ from oauthlib.oauth2.rfc6749.errors import MismatchingStateError, MissingTokenEr
 #authd_client.sleep()
 
 
-def connect_to_fitbit():
+def connect_to_fitbit(user_name):
     #authd_client = services.fitbit.FitbitOauth2Client(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6')
     #code = authd_client.authorize_token_url(scope=["sleep"])
     #print code[1]
@@ -19,7 +19,7 @@ def connect_to_fitbit():
     #print authd_client.make_request("https://api.fitbit.com/1/user/-/sleep/date/2014-09-01.json", method='GET')
 
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
-                          redirect_uri="https://nott.herokuapp.com/oauth")
+                          redirect_uri="https://nott.herokuapp.com/oauth?user_name="+user_name)
     url = server.browser_authorize()
 
     print('FULL RESULTS = %s' % server.oauth.token)
@@ -33,7 +33,7 @@ def fetch_access_token(state, code=None, error=None):
                           redirect_uri="https://nott.herokuapp.com/oauth")
     if code:
         try:
-            server.oauth.fetch_access_token(code, server.redirect_uri)
+            access_token = server.oauth.fetch_access_token(code, server.redirect_uri)
         except MissingTokenError:
             print "Missing access token parameter."
             #error = self._fmt_failure(
