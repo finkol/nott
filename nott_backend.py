@@ -18,8 +18,9 @@ def hello():
 
 
 @app.route('/connect_to_fitbit')
-def connect_to_fitbit():
+def connect_fitbit():
     user_name = request.args['user_name']
+    print user_name
     url = connect_to_fitbit(user_name)
     return redirect(url)
 
