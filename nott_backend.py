@@ -7,6 +7,7 @@ from services.fitbit_services.fitbit_api import connect_to_fitbit, fetch_access_
 from services.activity import log_activity
 from services.food import log_food
 from services.sleep import get_sleep_from_fitbit
+import services.user as user_service
 from error_handling.generic_error import GenericError
 
 app = Flask(__name__)
@@ -112,6 +113,15 @@ def handle_generic_error(error):
 @app.route('/get_sleep')
 def get_sleep():
     return jsonify(get_sleep_from_fitbit("2016-04-07"))
+
+@app.route('/login', methods=['POST'])
+def login():
+    if 'user_name' in request.json:
+        user_name = request.json.get('user_name')
+    else:
+        raise GenericError("user_name not provided")
+
+    return jsonify(user_service.login(user_name))
 
 
 if __name__ == '__main__':
