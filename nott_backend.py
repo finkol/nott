@@ -18,9 +18,9 @@ def hello():
     return "Hello!"
 
 
-@app.route('/connect_to_fitbit')
-def connect_fitbit():
-    url = connect_to_fitbit()
+@app.route('/connect_to_fitbit/<user_name>')
+def connect_fitbit(user_name=None):
+    url = connect_to_fitbit(user_name)
     return redirect(url)
 
 

@@ -25,12 +25,12 @@ class OAuth2Server:
             <h1>ERROR: %s</h1><br/><h3>You can close this window</h3>%s"""
         self.oauth = FitbitOauth2Client(client_id, client_secret)
 
-    def browser_authorize(self):
+    def browser_authorize(self, user_name):
         """
         Open a browser to the authorization url and spool up a CherryPy
         server to accept the response
         """
-        url, _ = self.oauth.authorize_token_url(redirect_uri=self.redirect_uri)
+        url, _ = self.oauth.authorize_token_url(redirect_uri=self.redirect_uri, state=user_name)
         # Open the web browser in a new thread for command-line browser support
         # threading.Timer(1, webbrowser.open, args=(url,)).start()
         return url

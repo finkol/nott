@@ -13,7 +13,7 @@ from models.user import User
 #authd_client.sleep()
 
 
-def connect_to_fitbit():
+def connect_to_fitbit(user_name):
     #print user_name
     #authd_client = services.fitbit_services.FitbitOauth2Client(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6')
     #code = authd_client.authorize_token_url(scope=["sleep"])
@@ -24,7 +24,7 @@ def connect_to_fitbit():
 
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
                           redirect_uri="https://nott.herokuapp.com/oauth")
-    url = server.browser_authorize()
+    url = server.browser_authorize(user_name=user_name)
 
     print('FULL RESULTS = %s' % server.oauth.token)
     print('ACCESS_TOKEN = %s' % server.oauth.token['access_token'])
@@ -33,7 +33,7 @@ def connect_to_fitbit():
 
 
 def fetch_access_token(state, code=None, error=None):
-    user = db_session.query(User).filter(User.user_name == "finnur").first()
+    user = db_session.query(User).filter(User.user_name == state).first()
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
                           redirect_uri="https://nott.herokuapp.com/oauth")
     if code:
