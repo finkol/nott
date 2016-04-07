@@ -3,9 +3,10 @@ import os
 from flask import Flask, request, redirect, jsonify
 
 from database import init_db
-from services.fitbit.fitbit_api import connect_to_fitbit, fetch_access_token
+from services.fitbit_services.fitbit_api import connect_to_fitbit, fetch_access_token
 from services.activity import log_activity
 from services.food import log_food
+from services.sleep import get_sleep_from_fitbit
 from error_handling.generic_error import GenericError
 
 app = Flask(__name__)
@@ -17,16 +18,14 @@ def hello():
     return "Hello!"
 
 
-@app.route('/connect_to_fitbit')
-def connect_fitbit():
-    #user_name = request.args['user_name']
-    #print user_name
-    url = connect_to_fitbit()
+@app.route('/connect_to_fitbit/<user_name>')
+def connect_fitbit(user_name=None):
+    url = connect_to_fitbit(user_name)
     return redirect(url)
 
 
-@app.route('/oauth')
-def fitbit_oauth():
+@app.route('/oauth/<user_name>')
+def fitbit_oauth(user_name=None):
     code = None
     state = None
     error = None
@@ -42,8 +41,8 @@ def fitbit_oauth():
     #if 'user_name' in request.args:
     #    user_name = request.args['user_name']
 
-    fetch_access_token(state, code, error)
-    return "Hello oauth"
+    fetch_access_token(state, code, error, user_name)
+    return "Hello oauth" + user_name
 
 
 @app.route('/activity', methods=['POST'])
@@ -108,6 +107,11 @@ def handle_generic_error(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+@app.route('/get_sleep')
+def get_sleep():
+    return jsonify(get_sleep_from_fitbit("2016-04-07"))
 
 
 if __name__ == '__main__':
