@@ -23,7 +23,7 @@ def connect_to_fitbit(user_name=None):
     #print authd_client.make_request("https://api.fitbit.com/1/user/-/sleep/date/2014-09-01.json", method='GET')
 
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
-                          redirect_uri="https://nott.herokuapp.com/oauth/"+user_name)
+                          redirect_uri="https://nott.herokuapp.com/oauth")
     url = server.browser_authorize()
 
     print('FULL RESULTS = %s' % server.oauth.token)
@@ -35,12 +35,13 @@ def connect_to_fitbit(user_name=None):
 def fetch_access_token(state, code=None, error=None, user_name=None):
     user = db_session.query(User).filter(User.user_name == user_name).first()
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
-                          redirect_uri="https://nott.herokuapp.com/oauth/"+user_name)
+                          redirect_uri="https://nott.herokuapp.com/oauth")
     if code:
         try:
             access_token = server.oauth.fetch_access_token(code, server.redirect_uri)
             user.fitbit_access_token = str(access_token)
             user.fitbit_user_id = str(access_token['user_id'])
+            user.fitbit_state = state
             #db_session.add(user)
             db_session.flush()
         except MissingTokenError:

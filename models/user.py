@@ -10,18 +10,22 @@ class User(Base):
     year_born = Column(Integer, unique=False)
     fitbit_access_token = Column(String, unique=False)
     fitbit_user_id = Column(String, unique=False)
+    fitbit_state = Column(String, unique=False)
 
-    def __init__(self, user_name=None, first_name=None, year_born=None, fitbit_access_token=None, fitbit_user_id=None):
+    def __init__(self, user_name=None, first_name=None, year_born=None, fitbit_access_token=None, fitbit_user_id=None,
+                 fitbit_state=None):
         self.user_name = user_name
         self.first_name = first_name
         self.year_born = year_born
         self.fitbit_access_token = fitbit_access_token
         self.fitbit_user_id = fitbit_user_id
+        self.fitbit_state = fitbit_state
 
     def __repr__(self):
         return '<User ' + str(self.id) + ' %r>' % self.user_name
 
     def get_dict(self):
         return {'id': self.id, 'user_name': self.user_name, 'first_name': self.first_name, 'year_born': self.year_born,
-                'fitbit_access_token': self.fitbit_access_token, 'fitbit_user_id': self.fitbit_user_id}
+                'fitbit_access_token': self.fitbit_access_token, 'fitbit_user_id': self.fitbit_user_id,
+                'fitbit_state': self.fitbit_state}
 
