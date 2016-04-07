@@ -18,14 +18,14 @@ def hello():
     return "Hello!"
 
 
-@app.route('/connect_to_fitbit/<user_name>')
-def connect_fitbit(user_name=None):
-    url = connect_to_fitbit(user_name)
+@app.route('/connect_to_fitbit')
+def connect_fitbit():
+    url = connect_to_fitbit()
     return redirect(url)
 
 
-@app.route('/oauth/<user_name>')
-def fitbit_oauth(user_name=None):
+@app.route('/oauth')
+def fitbit_oauth():
     code = None
     state = None
     error = None
@@ -41,8 +41,8 @@ def fitbit_oauth(user_name=None):
     #if 'user_name' in request.args:
     #    user_name = request.args['user_name']
 
-    fetch_access_token(state, code, error, user_name)
-    return "Hello oauth" + user_name
+    fetch_access_token(state, code, error)
+    return "Hello oauth"
 
 
 @app.route('/activity', methods=['POST'])
