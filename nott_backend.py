@@ -112,7 +112,8 @@ def handle_generic_error(error):
 
 @app.route('/get_sleep')
 def get_sleep():
-    return jsonify(get_sleep_from_fitbit("2016-04-07"))
+    user_name = request.args['user_name']
+    return jsonify(get_sleep_from_fitbit(user_name, "2016-04-07"))
 
 @app.route('/login', methods=['POST'])
 def login():
