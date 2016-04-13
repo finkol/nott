@@ -11,7 +11,7 @@ from models.user import User
 class Activity(Base):
     __tablename__ = 'activity'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey(User.id), unique=True)
+    user_id = Column(Integer, ForeignKey(User.id), unique=False)
     activity_type = Column(String(100), unique=False)
     start_time = Column(String(100), unique=False)
     end_time = Column(DateTime(timezone=False), unique=False, default=datetime.datetime.now)

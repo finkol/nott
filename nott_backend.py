@@ -4,11 +4,12 @@ from flask import Flask, request, redirect, jsonify
 
 from database import init_db
 from services.fitbit_services.fitbit_api import connect_to_fitbit, fetch_access_token
-from services.activity import log_activity
-from services.food import log_food
+from services.activity import log_activity, get_most_frequent_activity
+from services.food import log_food, get_most_frequent_food
 from services.sleep import get_sleep_from_fitbit
 import services.user as user_service
 from error_handling.generic_error import GenericError
+from dateutil import rrule, parser
 
 app = Flask(__name__)
 init_db()
@@ -39,7 +40,7 @@ def fitbit_oauth():
     if 'error' in request.args:
         error = request.args['error']
 
-    #if 'user_name' in request.args:
+    # if 'user_name' in request.args:
     #    user_name = request.args['user_name']
 
     fetch_access_token(state, code, error)
@@ -88,6 +89,8 @@ def post_food():
 
     if 'timestamp' in request.json:
         timestamp = request.json.get('timestamp')
+    else:
+        timestamp = None
 
     if 'score' in request.json:
         score = request.json.get('score')
@@ -96,9 +99,13 @@ def post_food():
 
     if 'picture' in request.json:
         picture = request.json.get('picture')
+    else:
+        picture = None
 
     if 'grams' in request.json:
         grams = request.json.get('grams')
+    else:
+        grams = 0.0
 
     return jsonify(log_food(user_name, food_type, title, timestamp, score, picture, grams))
 
@@ -113,7 +120,13 @@ def handle_generic_error(error):
 @app.route('/get_sleep')
 def get_sleep():
     user_name = request.args['user_name']
-    return jsonify(get_sleep_from_fitbit(user_name, "2016-04-07"))
+    from_date = request.args['from_date']
+    to_date = request.args['to_date']
+    dates = list(rrule.rrule(rrule.DAILY,
+                             dtstart=parser.parse(from_date),
+                             until=parser.parse(to_date)))
+    return jsonify(get_sleep_from_fitbit(user_name, dates))
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -125,7 +138,18 @@ def login():
     return jsonify(user_service.login(user_name))
 
 
+@app.route('/get_frequent_food')
+def get_most_frequent_foods():
+    user_name = request.args['user_name']
+    return jsonify(top3_food=get_most_frequent_food(user_name))
+
+
+@app.route('/get_frequent_activity')
+def get_most_frequent_activities_types():
+    user_name = request.args['user_name']
+    return jsonify(top3_activity=get_most_frequent_activity(user_name))
+
+
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 2600))
     app.run(host='0.0.0.0', port=port, debug=True)
-

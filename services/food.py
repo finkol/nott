@@ -1,3 +1,5 @@
+from sqlalchemy import func, desc
+
 from database import db_session
 from models.user import User
 from models.food import Food
@@ -7,9 +9,9 @@ from error_handling.generic_error import GenericError
 
 def log_food(user_name, food_type, title, timestamp, score, picture, grams):
     try:
-        user = db_session.query(User).filter(User.user_name == user_name).first()
+        user = db_session.query(User).filter(User.user_name == user_name.lower()).first()
 
-        food = Food(user.id,food_type, title, timestamp, score, str(picture), grams)
+        food = Food(user.id, food_type.lower(), title, timestamp, score, str(picture), grams)
         db_session.add(food)
         db_session.flush()
         return {"message": "Success", "food": food.get_dict()}
@@ -19,3 +21,18 @@ def log_food(user_name, food_type, title, timestamp, score, picture, grams):
         raise GenericError("Unspecific error came up")
 
 
+def get_most_frequent_food(user_name):
+    user = db_session.query(User).filter(User.user_name == user_name).first()
+
+    foods = db_session.query(func.count(Food.id).label('qty'), Food.title).filter(Food.user_id == user.id).group_by(
+        Food.title).order_by(desc('qty')).limit(3)
+
+    all_foods = []
+    for food in foods:
+        print food[1]
+        food_object = db_session.query(Food).filter(Food.title == food[1]).filter(Food.picture is not None).first()
+        print food_object
+        if food_object is None:
+            food_object = db_session.query(Food).filter(Food.title == food[1]).first()
+        all_foods.append(food_object.get_dict())
+    return all_foods
