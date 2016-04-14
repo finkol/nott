@@ -151,10 +151,18 @@ def get_most_frequent_activities_types():
 
 
 @app.route('/get_sleep_data_for_day')
-def get_day_data():
+def get_sleep_data_for_day():
     user_name = request.args['user_name']
     date_str = request.args['date_str']
     return jsonify(get_sleep_for_day(user_name, date_str))
+
+
+@app.route('/get_timeline_for_day')
+def get_timeline_data():
+    user_name = request.args['user_name']
+    date_str = request.args['date_str']
+    return jsonify(objects_for_timeline=user_service.get_timeline(user_name, date_str))
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 2600))
