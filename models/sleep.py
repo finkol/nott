@@ -1,3 +1,4 @@
+import ast
 import datetime
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
@@ -59,7 +60,7 @@ class Sleep(Base):
                 'minutes_after_wakeup': self.minutes_after_wakeup,
                 'minutes_awake': self.minutes_awake,
                 'duration': self.duration,
-                'start_time': self.start_time,
+                'start_time': str(self.start_time),
                 'restless_count': self.restless_count,
                 'efficiency': self.efficiency,
                 'minutes_asleep': self.minutes_asleep,
@@ -69,6 +70,16 @@ class Sleep(Base):
                 'log_id': self.log_id,
                 'time_in_bed': self.time_in_bed,
                 'is_main_sleep': self.is_main_sleep,
-                'minute_data': self.minute_data,
-                'date_of_sleep': self.date_of_sleep,
+                'minute_data': ast.literal_eval(self.minute_data),
+                'date_of_sleep': str(self.date_of_sleep),
+                'user_id': self.user_id}
+
+    def get_data_for_daily(self):
+        return {'start_time': str(self.start_time),
+                'efficiency': self.efficiency,
+                'minutes_to_fall_asleep': self.minutes_to_fall_asleep,
+                'time_in_bed': self.time_in_bed,
+                'is_main_sleep': self.is_main_sleep,
+                'minute_data': ast.literal_eval(self.minute_data),
+                'date_of_sleep': str(self.date_of_sleep),
                 'user_id': self.user_id}

@@ -6,7 +6,7 @@ from database import init_db
 from services.fitbit_services.fitbit_api import connect_to_fitbit, fetch_access_token
 from services.activity import log_activity, get_most_frequent_activity
 from services.food import log_food, get_most_frequent_food
-from services.sleep import get_sleep_from_fitbit
+from services.sleep import get_sleep_from_fitbit, get_sleep_for_day
 import services.user as user_service
 from error_handling.generic_error import GenericError
 from dateutil import rrule, parser
@@ -125,7 +125,7 @@ def get_sleep():
     dates = list(rrule.rrule(rrule.DAILY,
                              dtstart=parser.parse(from_date),
                              until=parser.parse(to_date)))
-    return jsonify(get_sleep_from_fitbit(user_name, dates))
+    return jsonify(sleeps=get_sleep_from_fitbit(user_name, dates))
 
 
 @app.route('/login', methods=['POST'])
@@ -149,6 +149,12 @@ def get_most_frequent_activities_types():
     user_name = request.args['user_name']
     return jsonify(top3_activity=get_most_frequent_activity(user_name))
 
+
+@app.route('/get_day_data')
+def get_day_data():
+    user_name = request.args['user_name']
+    date_str = request.args['date_str']
+    return jsonify(get_sleep_for_day(user_name, date_str))
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 2600))
