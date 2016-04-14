@@ -6,7 +6,7 @@ from database import init_db
 from services.fitbit_services.fitbit_api import connect_to_fitbit, fetch_access_token
 from services.activity import log_activity, get_most_frequent_activity
 from services.food import log_food, get_most_frequent_food
-from services.sleep import get_sleep_from_fitbit, get_sleep_for_day
+from services.sleep import get_sleep_from_fitbit, get_sleep_for_day, get_sleep_quality_chart
 import services.user as user_service
 from error_handling.generic_error import GenericError
 from dateutil import rrule, parser
@@ -162,6 +162,12 @@ def get_timeline_data():
     user_name = request.args['user_name']
     date_str = request.args['date_str']
     return jsonify(objects_for_timeline=user_service.get_timeline(user_name, date_str))
+
+
+@app.route('/get_sleep_quality_chart')
+def get_sleep_quality():
+    user_name = request.args['user_name']
+    return jsonify(efficiency=get_sleep_quality_chart(user_name))
 
 
 if __name__ == '__main__':
