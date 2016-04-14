@@ -1,3 +1,7 @@
+import base64
+
+import requests
+
 import services.fitbit_services
 from services.fitbit_services.connect_to_fitbit_api import OAuth2Server
 from oauthlib.oauth2.rfc6749.errors import MismatchingStateError, MissingTokenError
@@ -60,3 +64,16 @@ def fetch_access_token(state, code=None, error=None):
     #return error if error else self.success_html
     return "Done"
 
+
+def get_new_refresh_token(client_id, client_secret, refresh_token):
+    url = 'https://api.fitbit.com/oauth2/token'
+    unenc_str = (client_id + ':' + client_secret).encode('utf8')
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        'Authorization': b'Basic ' + base64.b64encode(unenc_str)
+    }
+
+    payload = {'grant_type': 'refresh_token', 'refresh_token': refresh_token}
+
+    r = requests.post(url, headers=headers, data=payload)
+    return str(r.content)

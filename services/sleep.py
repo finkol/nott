@@ -1,6 +1,5 @@
-import base64
-from datetime import date, timedelta, time, datetime
 import ast
+from datetime import timedelta, time, datetime
 
 from database import db_session
 # from models.user import User
@@ -8,27 +7,11 @@ from database import db_session
 
 from error_handling.generic_error import GenericError
 import fitbit
-from fitbit.api import FitbitOauth2Client
-
-import json
 
 from models.sleep import Sleep
 from models.user import User
-import requests
 
-
-def get_new_refresh_token(client_id, client_secret, refresh_token):
-    url = 'https://api.fitbit.com/oauth2/token'
-    unenc_str = (client_id + ':' + client_secret).encode('utf8')
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-        'Authorization': b'Basic ' + base64.b64encode(unenc_str)
-    }
-
-    payload = {'grant_type': 'refresh_token', 'refresh_token': refresh_token}
-
-    r = requests.post(url, headers=headers, data=payload)
-    return str(r.content)
+from services.fitbit_services.fitbit_api import get_new_refresh_token
 
 
 def get_sleep_from_fitbit(user_name, dates):
