@@ -150,7 +150,7 @@ def get_most_frequent_activities_types():
     return jsonify(top3_activity=get_most_frequent_activity(user_name))
 
 
-@app.route('/get_day_data')
+@app.route('/get_sleep_data_for_day')
 def get_day_data():
     user_name = request.args['user_name']
     date_str = request.args['date_str']
