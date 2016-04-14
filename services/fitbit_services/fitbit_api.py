@@ -18,14 +18,6 @@ from models.user import User
 
 
 def connect_to_fitbit(user_name):
-    #print user_name
-    #authd_client = services.fitbit_services.FitbitOauth2Client(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6')
-    #code = authd_client.authorize_token_url(scope=["sleep"])
-    #print code[1]
-    #access_token = authd_client.fetch_access_token(code=code[1], redirect_uri="http://0.0.0.0:2600/")
-    #print access_token
-    #print authd_client.make_request("https://api.fitbit.com/1/user/-/sleep/date/2014-09-01.json", method='GET')
-
     server = OAuth2Server(client_id='227PT7', client_secret='52d59408469ac8aa82d4bdcca69071a6',
                           redirect_uri="https://nott.herokuapp.com/oauth")
     url = server.browser_authorize(user_name=user_name)
@@ -46,22 +38,13 @@ def fetch_access_token(state, code=None, error=None):
             user.fitbit_access_token = str(access_token)
             user.fitbit_user_id = str(access_token['user_id'])
             user.fitbit_state = state
-            #db_session.add(user)
             db_session.flush()
         except MissingTokenError:
             print "Missing access token parameter."
-            #error = self._fmt_failure(
-             #   'Missing access token parameter.</br>Please check that '
-              #  'you are using the correct client_secret')
         except MismatchingStateError:
             print "CSRF Warning! Mismatching state"
-            #error = self._fmt_failure('CSRF Warning! Mismatching state')
     else:
         print "Unknown error while authenticating"
-        #error = self._fmt_failure('Unknown error while authenticating')
-    # Use a thread to shutdown cherrypy so we can return HTML first
-    #self._shutdown_cherrypy()
-    #return error if error else self.success_html
     return "Done"
 
 

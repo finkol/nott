@@ -1,17 +1,14 @@
 import ast
 from datetime import timedelta, time, datetime
 
-from database import db_session
-# from models.user import User
-# from models.food import Food
-
-from error_handling.generic_error import GenericError
 import fitbit
 
+from database import db_session
+from error_handling.generic_error import GenericError
 from models.sleep import Sleep
 from models.user import User
-
 from services.fitbit_services.fitbit_api import get_new_refresh_token
+from services.time_calculations import perdelta_time, perdelta, minutes_to_hours_minutes
 
 
 def get_sleep_from_fitbit(user_name, dates):
@@ -34,8 +31,6 @@ def get_sleep_from_fitbit(user_name, dates):
         sleep = []
         for one_date in dates:
             sleep_fitbit_objects = server.get_sleep(one_date)
-            # print sleep_fitbit_objects
-            print len(sleep_fitbit_objects['sleep'])
             if len(sleep_fitbit_objects['sleep']) > 0:
                 i = 0
                 for sleep_fitbit_object in sleep_fitbit_objects['sleep']:
@@ -76,45 +71,15 @@ def get_sleep_from_fitbit(user_name, dates):
         raise GenericError("Unspecific error came up")
 
 
-def time_plus(time, timedelta):
-    start = datetime(
-        2000, 1, 1,
-        hour=time.hour, minute=time.minute, second=time.second)
-    end = start + timedelta
-    return end.time()
-
-
-def perdelta_time(start, end, delta):
-    curr = start
-    while curr != end:
-        yield curr
-        curr = time_plus(curr, delta)
-
-def perdelta(start, end, delta):
-    curr = start
-    while curr < end:
-        yield curr
-        curr += delta
-
-
-def minutes_to_hours_minutes(minutes):
-    minutes = timedelta(minutes=minutes)
-    d = datetime(1, 1, 1) + minutes
-
-    return "%02d:%02d" % (d.hour, d.minute)
-
-
 def get_sleep_for_day(user_name, date_str):
     user = db_session.query(User).filter(User.user_name == user_name).first()
     sleeps = db_session.query(Sleep).filter(Sleep.user_id == user.id).filter(Sleep.date_of_sleep == date_str)
 
     night_minute_interval = {}
     for result in perdelta_time(time(19, 0, 0), time(10, 0, 0), timedelta(minutes=1)):
-        # interval_instance = {'time': str(result), 'value': 4}
         night_minute_interval[str(result)] = "out of bed"
 
     sleeps_list = []
-    sleep_summary = {}
     asleep_minutes = 0
     awake_minutes = 0
     really_awake_minutes = 0
@@ -149,7 +114,7 @@ def get_sleep_for_day(user_name, date_str):
                     'start_time': start_time,
                     'end_time': end_time}
 
-    sleep_summary = {'efficiency': float(efficiency/no_of_logs), 'date_of_sleep': date_str}
+    sleep_summary = {'efficiency': float(efficiency / no_of_logs), 'date_of_sleep': date_str}
 
     return dict(night_minute_interval=night_minute_interval, time_summary=time_summary, sleep_summary=sleep_summary)
 
@@ -158,8 +123,9 @@ def get_sleep_quality_chart(user_name):
     user = db_session.query(User).filter(User.user_name == user_name).first()
 
     efficiency_list = []
-    for result in perdelta(datetime.today()- timedelta(days=10), datetime.today(), timedelta(days=1)):
-        sleeps = db_session.query(Sleep).filter(Sleep.user_id == user.id).filter(Sleep.date_of_sleep == str(result.date()))
+    for result in perdelta(datetime.today() - timedelta(days=10), datetime.today(), timedelta(days=1)):
+        sleeps = db_session.query(Sleep).filter(Sleep.user_id == user.id).filter(
+            Sleep.date_of_sleep == str(result.date()))
 
         no_of_logs = 0
         efficiency = 0
@@ -169,7 +135,7 @@ def get_sleep_quality_chart(user_name):
             efficiency += sleep_data['efficiency']
 
         if no_of_logs > 0:
-            efficiency_list.append({'date': str(result.date()), 'efficiency': float(efficiency/no_of_logs)})
+            efficiency_list.append({'date': str(result.date()), 'efficiency': float(efficiency / no_of_logs)})
         else:
             efficiency_list.append({'date': str(result.date()), 'efficiency': 0.0})
 

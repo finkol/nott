@@ -1,9 +1,11 @@
+from datetime import datetime, timedelta
 from sqlalchemy import func, desc
 
 from database import db_session
 from error_handling.generic_error import GenericError
 from models.user import User
 from models.activity import Activity
+from services.time_calculations import perdelta, seconds_to_hours_minutes
 
 
 def log_activity(user_name, activity_type, start_time, end_time):
@@ -34,3 +36,43 @@ def get_most_frequent_activity(user_name):
         all_activities.append(activity_object.get_dict())
 
     return all_activities
+
+
+def get_device_usage_chart(user_name):
+    user = db_session.query(User).filter(User.user_name == user_name).first()
+
+    activities_duration = []
+    for result in perdelta(datetime.today() - timedelta(days=10), datetime.today(),
+                           timedelta(days=1)):
+        activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
+            func.date_part('year', Activity.start_time) == result.date().year).filter(
+            func.date_part('month', Activity.start_time) == result.date().month).filter(
+            func.date_part('day', Activity.start_time) == result.date().day)
+
+        iPhone_duration = 0
+        iPad_duration = 0
+        tv_duration = 0
+        other_duration = 0
+        for activity in activities:
+            duration = abs((activity.end_time - activity.start_time).seconds)
+
+            if activity.activity_type == "iPhone":
+                iPhone_duration += duration
+
+            elif activity.activity_type == "iPad":
+                iPad_duration += duration
+
+            elif activity.activity_type == "TV":
+                tv_duration += duration
+
+            else:
+                other_duration += duration
+
+        activities_on_this_day = dict(date=str(result.date()), iPhone_duration=seconds_to_hours_minutes(iPhone_duration),
+                                      iPad_duration=seconds_to_hours_minutes(iPad_duration),
+                                      tv_duration=seconds_to_hours_minutes(tv_duration),
+                                      other_duration=seconds_to_hours_minutes(other_duration))
+
+        activities_duration.append(activities_on_this_day)
+
+    return activities_duration

@@ -4,7 +4,7 @@ from flask import Flask, request, redirect, jsonify
 
 from database import init_db
 from services.fitbit_services.fitbit_api import connect_to_fitbit, fetch_access_token
-from services.activity import log_activity, get_most_frequent_activity
+from services.activity import log_activity, get_most_frequent_activity, get_device_usage_chart
 from services.food import log_food, get_most_frequent_food
 from services.sleep import get_sleep_from_fitbit, get_sleep_for_day, get_sleep_quality_chart
 import services.user as user_service
@@ -169,6 +169,10 @@ def get_sleep_quality():
     user_name = request.args['user_name']
     return jsonify(efficiency=get_sleep_quality_chart(user_name))
 
+@app.route('/get_device_usage_chart')
+def get_device_usage():
+    user_name = request.args['user_name']
+    return jsonify(device_usage=get_device_usage_chart(user_name))
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 2600))
