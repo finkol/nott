@@ -1,4 +1,5 @@
 import datetime
+from operator import itemgetter
 
 from models.activity import Activity
 from models.food import Food
@@ -28,15 +29,27 @@ def get_timeline(user_name, date_str):
 
     objects_for_timeline = []
     foods = db_session.query(Food).filter(Food.user_id == user.id).filter(
-        func.extract('year', Food.timestamp) == date_obj.date())
+        func.date_part('year', Food.timestamp) == date_obj.date().year).filter(
+        func.date_part('month', Food.timestamp) == date_obj.date().month).filter(
+        func.date_part('day', Food.timestamp) == date_obj.date().day)
     print foods
     activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
-        func.extract(Activity.start_time, 'date') == date_obj.date())
+        func.date_part('year', Activity.start_time) == date_obj.date().year).filter(
+        func.date_part('month', Activity.start_time) == date_obj.date().month).filter(
+        func.date_part('day', Activity.start_time) == date_obj.date().day)
 
     for food in foods:
-        objects_for_timeline.append(food.get_dict())
+        food_dict = food.get_dict()
+        food_dict['type'] = 'food'
+        food_dict['time'] = str(food.timestamp.time())
+        objects_for_timeline.append(food_dict)
 
     for activity in activities:
-        objects_for_timeline.append(activity.get_dict())
+        activity_dict = activity.get_dict()
+        activity_dict['type'] = 'activity'
+        activity_dict['time'] = str(activity.start_time.time())
+        objects_for_timeline.append(activity_dict)
 
-    return objects_for_timeline
+    sorted_object_for_timeline = sorted(objects_for_timeline, key=itemgetter('time'))
+
+    return sorted_object_for_timeline
