@@ -66,6 +66,8 @@ def post_activity():
 
     if 'end_time' in request.json:
         end_time = request.json.get('end_time')
+    else:
+        end_time = None
 
     return jsonify(log_activity(user_name, activity_type, start_time, end_time))
 
