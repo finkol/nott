@@ -30,13 +30,12 @@ def get_most_frequent_food(user_name):
     all_foods = []
     order = 0
     for food in foods:
-        print food[1]
         food_object = db_session.query(Food).filter(Food.title == food[1]).filter(Food.picture is not None).first()
-        print food_object
         if food_object is None:
             food_object = db_session.query(Food).filter(Food.title == food[1]).first()
         food_dict = food_object.get_dict()
         food_dict['order'] = order
+        food_dict['title'] = food_dict['title'].encode("UTF-8")
         all_foods.append(food_dict)
         order += 1
     return all_foods

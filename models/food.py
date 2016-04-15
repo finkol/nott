@@ -24,6 +24,8 @@ class Food(Base):
         self.user_id = user_id
         self.type = type
         self.title = title
+        if title is not None:
+            self.title = title.decode("UTF-8")
         self.timestamp = timestamp
         self.score = score
         self.picture = picture
