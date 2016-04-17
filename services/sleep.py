@@ -123,7 +123,7 @@ def get_sleep_quality_chart(user_name):
     user = db_session.query(User).filter(User.user_name == user_name).first()
 
     efficiency_list = []
-    for result in perdelta(datetime.today() - timedelta(days=10), datetime.today(), timedelta(days=1)):
+    for result in perdelta(datetime(2016, 04, 01), datetime.today(), timedelta(days=1)):
         sleeps = db_session.query(Sleep).filter(Sleep.user_id == user.id).filter(
             Sleep.date_of_sleep == str(result.date()))
 

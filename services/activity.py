@@ -42,7 +42,7 @@ def get_device_usage_chart(user_name):
     user = db_session.query(User).filter(User.user_name == user_name).first()
 
     activities_duration = []
-    for result in perdelta(datetime.today() - timedelta(days=10), datetime.today(),
+    for result in perdelta(datetime(2016, 04, 01), datetime.today(),
                            timedelta(days=1)):
         activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
             func.date_part('year', Activity.start_time) == result.date().year).filter(
