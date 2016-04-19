@@ -39,3 +39,37 @@ def get_most_frequent_food(user_name):
         all_foods.append(food_dict)
         order += 1
     return all_foods
+
+
+def delete_food(user_name, food_id):
+    try:
+        user = db_session.query(User).filter(User.user_name == user_name).first()
+        food = db_session.query(Food).filter(Food.id == food_id).filter(Food.user_id == user.id).one()
+
+        db_session.delete(food)
+        db_session.flush()
+        return {"message": "Success"}
+    except Exception as e:
+        raise GenericError(e.message)
+    except:
+        raise GenericError("Unspecific error came up")
+
+
+def edit_food(user_name, food_id, food_type, title, timestamp, score, picture, grams):
+    try:
+        user = db_session.query(User).filter(User.user_name == user_name.lower()).first()
+
+        food = db_session.query(Food).filter(Food.id == food_id).filter(Food.user_id == user.id).one()
+        food.grams = grams
+        food.picture = picture
+        food.score = score
+        food.timestamp = timestamp
+        food.title = title
+        food.type = food_type
+
+        db_session.flush()
+        return {"message": "Success", "food": food.get_dict()}
+    except Exception as e:
+        raise GenericError(e.message)
+    except:
+        raise GenericError("Unspecific error came up")

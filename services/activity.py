@@ -76,3 +76,35 @@ def get_device_usage_chart(user_name):
         activities_duration.append(activities_on_this_day)
 
     return activities_duration
+
+
+def delete_activity(user_name, activity_id):
+    try:
+        user = db_session.query(User).filter(User.user_name == user_name).first()
+        food = db_session.query(Activity).filter(Activity.id == activity_id).filter(Activity.user_id == user.id).one()
+
+        db_session.delete(food)
+        db_session.flush()
+        return {"message": "Success"}
+    except Exception as e:
+        raise GenericError(e.message)
+    except:
+        raise GenericError("Unspecific error came up")
+
+
+def edit_activity(user_name, activity_id, activity_type, start_time, end_time):
+    try:
+        user = db_session.query(User).filter(User.user_name == user_name.lower()).first()
+
+        activity = db_session.query(Activity).filter(Activity.id == activity_id).filter(Activity.user_id == user.id).one()
+        activity.activity_type = activity_type
+        activity.end_time = end_time
+        activity.start_time = start_time
+
+        db_session.flush()
+        return {"message": "Success", "food": activity.get_dict()}
+    except Exception as e:
+        raise GenericError(e.message)
+    except:
+        raise GenericError("Unspecific error came up")
+

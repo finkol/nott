@@ -4,8 +4,9 @@ from flask import Flask, request, redirect, jsonify
 
 from database import init_db
 from services.fitbit_services.fitbit_api import connect_to_fitbit, fetch_access_token
-from services.activity import log_activity, get_most_frequent_activity, get_device_usage_chart
-from services.food import log_food, get_most_frequent_food
+from services.activity import log_activity, get_most_frequent_activity, get_device_usage_chart, delete_activity, \
+    edit_activity
+from services.food import log_food, get_most_frequent_food, edit_food, delete_food
 from services.sleep import get_sleep_from_fitbit, get_sleep_for_day, get_sleep_quality_chart
 import services.user as user_service
 from error_handling.generic_error import GenericError
@@ -171,10 +172,101 @@ def get_sleep_quality():
     user_name = request.args['user_name']
     return jsonify(efficiency=get_sleep_quality_chart(user_name))
 
+
 @app.route('/get_device_usage_chart')
 def get_device_usage():
     user_name = request.args['user_name']
     return jsonify(device_usage=get_device_usage_chart(user_name))
+
+
+@app.route('/delete_food', methods=['POST'])
+def post_detete_food():
+    food_id = request.json.get('food_id')
+    user_name = request.json.get('user_name')
+    return jsonify(delete_food(user_name, food_id))
+
+
+@app.route('/edit_food', methods=['POST'])
+def post_edit_food():
+    if 'user_name' in request.json:
+        user_name = request.json.get('user_name')
+    else:
+        raise GenericError("user_name not provided")
+
+    if 'food_type' in request.json:
+        food_type = request.json.get('food_type')
+    else:
+        raise GenericError("food_type not provided")
+
+    if 'title' in request.json:
+        title = request.json.get('title')
+    else:
+        raise GenericError("title not provided")
+
+    if 'timestamp' in request.json:
+        timestamp = request.json.get('timestamp')
+    else:
+        timestamp = None
+
+    if 'score' in request.json:
+        score = request.json.get('score')
+    else:
+        raise GenericError("score not provided")
+
+    if 'picture' in request.json:
+        picture = request.json.get('picture')
+    else:
+        picture = None
+
+    if 'grams' in request.json:
+        grams = request.json.get('grams')
+    else:
+        grams = 0.0
+
+    if 'food_id' in request.json:
+        food_id = request.json.get('food_id')
+    else:
+        raise GenericError("food_id not provided")
+
+    return jsonify(edit_food(user_name, food_id, food_type, title, timestamp, score, picture, grams))
+
+
+@app.route('/delete_activity', methods=['POST'])
+def post_detete_activity():
+    activity_id = request.json.get('activity_id')
+    user_name = request.json.get('user_name')
+    return jsonify(delete_activity(user_name, activity_id))
+
+
+@app.route('/edit_activity', methods=['POST'])
+def post_edit_activity():
+    if 'user_name' in request.json:
+        user_name = request.json.get('user_name')
+    else:
+        raise GenericError("user_name not provided")
+
+    if 'activity_type' in request.json:
+        activity_type = request.json.get('activity_type')
+    else:
+        raise GenericError("activity_type not provided")
+
+    if 'start_time' in request.json:
+        start_time = request.json.get('start_time')
+    else:
+        raise GenericError("start_time not provided")
+
+    if 'end_time' in request.json:
+        end_time = request.json.get('end_time')
+    else:
+        end_time = None
+
+    if 'activity_id' in request.json:
+        activity_id = request.json.get('activity_id')
+    else:
+        raise GenericError("activity_id not provided")
+
+    return jsonify(edit_activity(user_name, activity_id, activity_type, start_time, end_time))
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 2600))
