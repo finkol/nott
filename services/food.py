@@ -63,7 +63,8 @@ def edit_food(user_name, food_id, food_type, title, timestamp, score, picture, g
         food.grams = grams
         food.picture = picture
         food.score = score
-        food.timestamp = timestamp
+        if timestamp is not None:
+            food.timestamp = timestamp
         food.title = title
         food.type = food_type
 

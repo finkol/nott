@@ -98,8 +98,10 @@ def edit_activity(user_name, activity_id, activity_type, start_time, end_time):
 
         activity = db_session.query(Activity).filter(Activity.id == activity_id).filter(Activity.user_id == user.id).one()
         activity.activity_type = activity_type
-        activity.end_time = end_time
-        activity.start_time = start_time
+        if end_time is not None:
+            activity.end_time = end_time
+        if start_time is not None:
+            activity.start_time = start_time
 
         db_session.flush()
         return {"message": "Success", "food": activity.get_dict()}
