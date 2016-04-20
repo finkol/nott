@@ -35,3 +35,15 @@ def seconds_to_hours_minutes(seconds):
     d = datetime(1, 1, 1) + sec
 
     return "%02d:%02d" % (d.hour, d.minute)
+
+
+def seconds_to_hours_minutes_verbal(seconds):
+    sec = timedelta(seconds=seconds)
+    d = datetime(1, 1, 1) + sec
+
+    if d.hour == 0:
+        return "%2d min" % d.minute
+    elif d.hour == 1:
+        return "%2d hr, %2d min" % (d.hour, d.minute)
+    else:
+        return "%2d hrs, %2d min" % (d.hour, d.minute)

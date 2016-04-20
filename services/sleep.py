@@ -34,7 +34,6 @@ def get_sleep_from_fitbit(user_name, dates):
             if len(sleep_fitbit_objects['sleep']) > 0:
                 i = 0
                 for sleep_fitbit_object in sleep_fitbit_objects['sleep']:
-                    print sleep_fitbit_object
                     sleep_db_object = db_session.query(Sleep).filter(
                         Sleep.log_id == str(sleep_fitbit_object['logId'])).first()
                     if sleep_db_object is None:
@@ -76,7 +75,7 @@ def get_sleep_for_day(user_name, date_str):
     sleeps = db_session.query(Sleep).filter(Sleep.user_id == user.id).filter(Sleep.date_of_sleep == date_str)
 
     night_minute_interval = {}
-    for result in perdelta_time(time(19, 0, 0), time(10, 0, 0), timedelta(minutes=1)):
+    for result in perdelta_time(time(18, 0, 0), time(10, 0, 0), timedelta(minutes=1)):
         night_minute_interval[str(result)] = "out of bed"
 
     sleeps_list = []
@@ -110,7 +109,7 @@ def get_sleep_for_day(user_name, date_str):
     start_time = start_time.split()[1]
     time_summary = {'asleep': minutes_to_hours_minutes(asleep_minutes),
                     'awake': minutes_to_hours_minutes(awake_minutes),
-                    'really_awake_minutes': minutes_to_hours_minutes(really_awake_minutes),
+                    'really_awake': minutes_to_hours_minutes(really_awake_minutes),
                     'start_time': start_time,
                     'end_time': end_time}
 

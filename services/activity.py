@@ -81,9 +81,9 @@ def get_device_usage_chart(user_name):
 def delete_activity(user_name, activity_id):
     try:
         user = db_session.query(User).filter(User.user_name == user_name).first()
-        food = db_session.query(Activity).filter(Activity.id == activity_id).filter(Activity.user_id == user.id).one()
+        activity = db_session.query(Activity).filter(Activity.id == activity_id).filter(Activity.user_id == user.id).one()
 
-        db_session.delete(food)
+        db_session.delete(activity)
         db_session.flush()
         return {"message": "Success"}
     except Exception as e:
