@@ -61,7 +61,7 @@ def edit_food(user_name, food_id, food_type, title, timestamp, score, picture, g
 
         food = db_session.query(Food).filter(Food.id == food_id).filter(Food.user_id == user.id).one()
         food.grams = grams
-        food.picture = picture
+        food.picture = str(picture)
         food.score = score
         if timestamp is not None:
             food.timestamp = timestamp
