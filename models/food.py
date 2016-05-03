@@ -37,3 +37,7 @@ class Food(Base):
     def get_dict(self):
         return dict(id=self.id, user_id=self.user_id, type=self.type, title=self.title, timestamp=self.timestamp,
                     score=self.score, picture=self.picture, grams=float(self.grams))
+
+    def get_dict_without_picture(self):
+        return dict(id=self.id, user_id=self.user_id, type=self.type, title=self.title, timestamp=self.timestamp,
+                    score=self.score, grams=float(self.grams))

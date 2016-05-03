@@ -3,12 +3,15 @@ from operator import itemgetter
 
 from models.activity import Activity
 from models.food import Food
+from models.sleep import Sleep
 from models.user import User
 
 from database import db_session
 
-from sqlalchemy import func
+from sqlalchemy import func, Date, cast
 
+from services.notification import send_notification
+from services.sleep import get_sleep_for_day
 from services.time_calculations import perdelta_time, seconds_to_hours_minutes_verbal
 
 
@@ -50,12 +53,51 @@ def get_timeline(user_name, date_str):
         activity_dict['type'] = 'activity'
         activity_dict['time'] = str(activity.start_time.strftime("%H:%M"))
         time_difference = activity.end_time - activity.start_time
-        #print time_difference.total_seconds()
+        # print time_difference.total_seconds()
         duration = seconds_to_hours_minutes_verbal(time_difference.total_seconds())
-        #print duration
+        # print duration
         activity_dict['duration'] = duration.strip()
         objects_for_timeline.append(activity_dict)
 
     sorted_object_for_timeline = sorted(objects_for_timeline, key=itemgetter('time'))
 
     return sorted_object_for_timeline
+
+
+def send_notifications_if_not_records_today():
+    users = db_session.query(User)
+
+    remind_users = []
+    for user in users:
+        foods = db_session.query(Food).filter(Food.user_id == user.id).filter(
+            cast(Food.date_time, Date) == datetime.date.today())
+        activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
+            cast(Activity.start_time, Date) == datetime.date.today())
+
+        if foods == None and activities == None:
+            remind_users.append(user.id)
+
+    send_notification("Remember to log your children's foods and activities every day!", remind_users)
+
+
+def export_data(user_name, date_str):
+    user = db_session.query(User).filter(User.user_name == user_name).first()
+    date_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    date_str_plus_one = (date_obj + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+
+    foods = db_session.query(Food).filter(Food.user_id == user.id).filter(
+        cast(Food.timestamp, Date) == date_obj)
+    activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
+        cast(Activity.start_time, Date) == date_obj)
+    sleeps = get_sleep_for_day(user_name, date_str_plus_one)
+
+    food_objects = []
+    for food in foods:
+        food_objects.append(food.get_dict_without_picture())
+
+    activities_objects = []
+    for activity in activities:
+        activities_objects.append(activity.get_dict())
+
+    return dict(sleep_summary=sleeps['sleep_summary'], sleep_time_summary=sleeps['time_summary'], foods=food_objects, activities=activities_objects)
+
