@@ -62,7 +62,7 @@ def get_device_usage_chart(user_name):
             elif activity.activity_type == "iPad":
                 iPad_duration += duration
 
-            elif activity.activity_type == "TV":
+            elif activity.activity_type == "tv":
                 tv_duration += duration
 
             else:
