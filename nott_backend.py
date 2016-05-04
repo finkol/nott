@@ -268,10 +268,25 @@ def post_edit_activity():
     return jsonify(edit_activity(user_name, activity_id, activity_type, start_time, end_time))
 
 @app.route('/export_activities')
-def export_data():
-    user_name = request.args['user_name']
-    date_str = request.args['date_str']
-    return user_service.export_activities(user_name, date_str)
+def export_activities():
+    user_name = None
+    if 'user_name' in request.args:
+        user_name = request.args['user_name']
+    return user_service.export_activities(user_name)
+
+@app.route('/export_foods')
+def export_foods():
+    user_name=None
+    if 'user_name' in request.args:
+        user_name = request.args['user_name']
+    return user_service.export_food(user_name)
+
+@app.route('/export_sleeps')
+def export_sleeps():
+    user_name=None
+    if 'user_name' in request.args:
+        user_name = request.args['user_name']
+    return user_service.export_sleep(user_name)
 
 
 if __name__ == '__main__':

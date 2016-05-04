@@ -34,3 +34,8 @@ class Activity(Base):
                 'end_time_1970': (self.end_time - epoch).total_seconds(),
                 'start_time_1970': (self.start_time - epoch).total_seconds(), 'end_time': self.end_time,
                 'start_time': self.start_time}
+
+    def get_dict_for_export(self):
+        return {'user_name': self.user.user_name, 'activity_type': self.activity_type,
+         'end_time': self.end_time,
+         'start_time': self.start_time}

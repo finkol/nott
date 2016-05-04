@@ -1,6 +1,9 @@
+import StringIO
 import datetime
 import os
 from operator import itemgetter
+
+from flask import make_response
 
 from models.activity import Activity
 from models.food import Food
@@ -83,60 +86,72 @@ def send_notifications_if_not_records_today():
     send_notification("Remember to log your children's foods and activities every day!", remind_users)
 
 
-def create_csv_string(list_of_dicts):
-    #Create a master list of keys
-    allKeys = list_of_dicts[0].keys()
+def create_csv_string(list_of_dicts, type):
+    keys = list_of_dicts[0].keys()
+    si = StringIO.StringIO()
+    dict_writer = csv.DictWriter(si, keys)
+    dict_writer.writeheader()
+    dict_writer.writerows(list_of_dicts)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename="+type+".csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
 
-    whole_string = ','.join(allKeys) + os.linesep
-    #Go through printing the rows
-    for row in list_of_dicts:
-        values = []
-        line_string = ""
-        for key in allKeys:
-            #Add the values if it exists, if no key in this row add a blank
-            if key in row:
-                values.append(str(row[key]))
-            else:
-                values.append('')
-        line_string = ','.join(values)
-        whole_string += line_string + os.linesep
 
-    return whole_string
+def export_sleep(user_name):
+    if user_name != None:
+        user = db_session.query(User).filter(User.user_name == user_name).first()
 
-def export_food(user_name, date_str):
-    user = db_session.query(User).filter(User.user_name == user_name).first()
-    date_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d")
-    date_str_plus_one = (date_obj + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        sleeps = db_session.query(Sleep).filter(Sleep.user_id == user.id)
+    else:
+        sleeps = db_session.query(Sleep)
+        user_name = "all"
 
-    foods = db_session.query(Food).filter(Food.user_id == user.id).filter(
-        cast(Food.timestamp, Date) == date_obj)
-    activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
-        cast(Activity.start_time, Date) == date_obj)
-    sleeps = get_sleep_for_day(user_name, date_str_plus_one)
+    sleep_objects = []
+    for sleep in sleeps:
+        dict_for_export = sleep.get_data_for_export()
+        dict_for_export['time'] = str(sleep.start_time.strftime("%H:%M"))
+        sleep_objects.append(dict_for_export)
+
+    return create_csv_string(sleep_objects, user_name+"_sleeps")
+
+
+def export_food(user_name):
+    if user_name != None:
+        user = db_session.query(User).filter(User.user_name == user_name).first()
+
+        foods = db_session.query(Food).filter(Food.user_id == user.id)
+    else:
+        foods = db_session.query(Food)
+        user_name = "all"
 
     food_objects = []
     for food in foods:
-        food_objects.append(food.get_dict_without_picture())
+        dict_for_export = food.get_dict_for_export()
+        dict_for_export['time'] = str(food.timestamp.time())
+        food_objects.append(dict_for_export)
+
+    return create_csv_string(food_objects, user_name+"_foods")
+
+
+def export_activities(user_name):
+    if user_name != None:
+        user = db_session.query(User).filter(User.user_name == user_name).first()
+
+        activities = db_session.query(Activity).filter(Activity.user_id == user.id)
+    else:
+        activities = db_session.query(Activity)
+        user_name = "all"
 
     activities_objects = []
     for activity in activities:
-        activities_objects.append(activity.get_dict())
+        dict_for_export = activity.get_dict_for_export()
+        time_difference = activity.end_time - activity.start_time
+        dict_for_export['duration_seconds'] = time_difference.total_seconds()
+        dict_for_export['time'] = str(activity.start_time.strftime("%H:%M"))
+        activities_objects.append(dict_for_export)
 
-    return dict(sleep_summary=sleeps['sleep_summary'], sleep_time_summary=sleeps['time_summary'], foods=food_objects, activities=activities_objects)
-
-def export_activities(user_name, date_str):
-    user = db_session.query(User).filter(User.user_name == user_name).first()
-    date_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d")
-    date_str_plus_one = (date_obj + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-
-    activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
-        cast(Activity.start_time, Date) == date_obj)
-
-    activities_objects = []
-    for activity in activities:
-        activities_objects.append(activity.get_dict())
-
-    return create_csv_string(activities_objects)
+    return create_csv_string(activities_objects, user_name+"_activities")
 
 
 

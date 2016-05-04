@@ -44,3 +44,7 @@ class Food(Base):
     def get_dict_without_picture(self):
         return dict(id=self.id, user_id=self.user_id, type=self.type, title=self.title, timestamp=self.timestamp,
                     timestamp_1970=(self.timestamp - epoch).total_seconds(), score=self.score, grams=float(self.grams))
+
+    def get_dict_for_export(self):
+        return dict(user_name=self.user.user_name, type=self.type, title=self.title.encode("UTF-8"), timestamp=self.timestamp,
+                    score=self.score)
