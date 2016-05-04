@@ -10,6 +10,7 @@ from models.user import User
 from services.fitbit_services.fitbit_api import get_new_refresh_token
 from services.time_calculations import perdelta_time, perdelta, minutes_to_hours_minutes
 
+epoch = datetime.utcfromtimestamp(0)
 
 def get_sleep_from_fitbit(user_name, dates):
     try:
@@ -125,7 +126,7 @@ def get_sleep_quality_chart(user_name):
     for result in perdelta(datetime(2016, 04, 01), datetime.today(), timedelta(days=1)):
         sleeps = db_session.query(Sleep).filter(Sleep.user_id == user.id).filter(
             Sleep.date_of_sleep == str(result.date()))
-
+        date_obj = datetime.strptime(str(result.date()), "%Y-%m-%d")
         no_of_logs = 0
         efficiency = 0
         for sleep in sleeps:
@@ -134,8 +135,8 @@ def get_sleep_quality_chart(user_name):
             efficiency += sleep_data['efficiency']
 
         if no_of_logs > 0:
-            efficiency_list.append({'date': str(result.date()), 'efficiency': float(efficiency / no_of_logs)})
+            efficiency_list.append({'date': (datetime.combine(date_obj, datetime.min.time()) - epoch).total_seconds(), 'efficiency': float(efficiency / no_of_logs)})
         else:
-            efficiency_list.append({'date': str(result.date()), 'efficiency': 0.0})
+            efficiency_list.append({'date': (datetime.combine(date_obj, datetime.min.time()) - epoch).total_seconds(), 'efficiency': 0.0})
 
     return efficiency_list

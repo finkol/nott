@@ -267,11 +267,11 @@ def post_edit_activity():
 
     return jsonify(edit_activity(user_name, activity_id, activity_type, start_time, end_time))
 
-@app.route('/export_data')
+@app.route('/export_activities')
 def export_data():
     user_name = request.args['user_name']
     date_str = request.args['date_str']
-    return jsonify(data=user_service.export_data(user_name, date_str))
+    return user_service.export_activities(user_name, date_str)
 
 
 if __name__ == '__main__':

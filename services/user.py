@@ -1,4 +1,5 @@
 import datetime
+import os
 from operator import itemgetter
 
 from models.activity import Activity
@@ -13,6 +14,8 @@ from sqlalchemy import func, Date, cast
 from services.notification import send_notification
 from services.sleep import get_sleep_for_day
 from services.time_calculations import perdelta_time, seconds_to_hours_minutes_verbal
+
+import csv
 
 
 def login(user_name):
@@ -80,7 +83,27 @@ def send_notifications_if_not_records_today():
     send_notification("Remember to log your children's foods and activities every day!", remind_users)
 
 
-def export_data(user_name, date_str):
+def create_csv_string(list_of_dicts):
+    #Create a master list of keys
+    allKeys = list_of_dicts[0].keys()
+
+    whole_string = ','.join(allKeys) + os.linesep
+    #Go through printing the rows
+    for row in list_of_dicts:
+        values = []
+        line_string = ""
+        for key in allKeys:
+            #Add the values if it exists, if no key in this row add a blank
+            if key in row:
+                values.append(str(row[key]))
+            else:
+                values.append('')
+        line_string = ','.join(values)
+        whole_string += line_string + os.linesep
+
+    return whole_string
+
+def export_food(user_name, date_str):
     user = db_session.query(User).filter(User.user_name == user_name).first()
     date_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d")
     date_str_plus_one = (date_obj + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
@@ -100,4 +123,21 @@ def export_data(user_name, date_str):
         activities_objects.append(activity.get_dict())
 
     return dict(sleep_summary=sleeps['sleep_summary'], sleep_time_summary=sleeps['time_summary'], foods=food_objects, activities=activities_objects)
+
+def export_activities(user_name, date_str):
+    user = db_session.query(User).filter(User.user_name == user_name).first()
+    date_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    date_str_plus_one = (date_obj + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+
+    activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
+        cast(Activity.start_time, Date) == date_obj)
+
+    activities_objects = []
+    for activity in activities:
+        activities_objects.append(activity.get_dict())
+
+    return create_csv_string(activities_objects)
+
+
+
 
