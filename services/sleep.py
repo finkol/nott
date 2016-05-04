@@ -77,8 +77,10 @@ def get_sleep_for_day(user_name, date_str):
     sleeps = db_session.query(Sleep).filter(Sleep.user_id == user.id).filter(Sleep.date_of_sleep == date_str)
 
     night_minute_interval = {}
+    number_of_minutes = 0.0
     for result in perdelta_time(time(18, 0, 0), time(10, 0, 0), timedelta(minutes=1)):
         night_minute_interval[str(result)] = "out of bed"
+        number_of_minutes += 1.0
 
     sleeps_list = []
     asleep_minutes = 0
@@ -107,13 +109,19 @@ def get_sleep_for_day(user_name, date_str):
         efficiency += sleep_data['efficiency']
         if no_of_logs == 1:
             start_time = sleep_data['start_time']
-
+    asleep_percentage = float(asleep_minutes/number_of_minutes)
+    awake_percentage = float(awake_minutes/number_of_minutes)
+    really_awake_percentage = float(really_awake_minutes/number_of_minutes)
     start_time = start_time.split()[1]
     time_summary = {'asleep': minutes_to_hours_minutes(asleep_minutes),
                     'awake': minutes_to_hours_minutes(awake_minutes),
                     'really_awake': minutes_to_hours_minutes(really_awake_minutes),
                     'start_time': start_time,
-                    'end_time': end_time}
+                    'end_time': end_time,
+                    'asleep_percentage': asleep_percentage,
+                    'awake_percentage': awake_percentage,
+                    'really_awake_percentage': really_awake_percentage,
+                    'out_of_bed_percentage': float(1.0-asleep_percentage-awake_percentage-really_awake_percentage)}
 
     sleep_summary = {'efficiency': float(efficiency / no_of_logs), 'date_of_sleep': date_str}
 
