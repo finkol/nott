@@ -12,6 +12,7 @@ from services.time_calculations import perdelta_time, perdelta, minutes_to_hours
 
 epoch = datetime.utcfromtimestamp(0)
 
+
 def get_sleep_from_fitbit(user_name, dates):
     try:
         user = db_session.query(User).filter(User.user_name == user_name).first()
@@ -135,8 +136,11 @@ def get_sleep_quality_chart(user_name):
             efficiency += sleep_data['efficiency']
 
         if no_of_logs > 0:
-            efficiency_list.append({'date': (datetime.combine(date_obj, datetime.min.time()) - epoch).total_seconds(), 'efficiency': float(efficiency / no_of_logs)})
+            efficiency_list.append({'date': (datetime.combine(date_obj, datetime.min.time()) - epoch).total_seconds(),
+                                    'efficiency': float(efficiency / no_of_logs), 'date_human': str(result.date())})
         else:
-            efficiency_list.append({'date': (datetime.combine(date_obj, datetime.min.time()) - epoch).total_seconds(), 'efficiency': 0.0})
+            efficiency_list.append(
+                {'date': (datetime.combine(date_obj, datetime.min.time()) - epoch).total_seconds(), 'efficiency': 0.0,
+                 'date_human': str(result.date())})
 
     return efficiency_list
