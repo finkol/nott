@@ -75,7 +75,7 @@ class Sleep(Base):
                 'is_main_sleep': self.is_main_sleep,
                 'minute_data': ast.literal_eval(self.minute_data),
                 'date_of_sleep': str(self.date_of_sleep),
-                'date_of_sleep_1970': (self.date_of_sleep - epoch).total_seconds(),
+                'date_of_sleep_1970': (datetime.datetime.combine(self.date_of_sleep, datetime.datetime.min.time()) - epoch).total_seconds(),
                 'user_id': self.user_id}
 
     def get_data_for_daily(self):
@@ -87,5 +87,5 @@ class Sleep(Base):
                 'is_main_sleep': self.is_main_sleep,
                 'minute_data': ast.literal_eval(self.minute_data),
                 'date_of_sleep': str(self.date_of_sleep),
-                'date_of_sleep_1970': (self.date_of_sleep - epoch).total_seconds(),
+                'date_of_sleep_1970': (datetime.datetime.combine(self.date_of_sleep, datetime.datetime.min.time()) - epoch).total_seconds(),
                 'user_id': self.user_id}
