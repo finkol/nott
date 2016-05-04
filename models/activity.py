@@ -7,6 +7,8 @@ import datetime
 
 from models.user import User
 
+epoch = datetime.datetime.utcfromtimestamp(0)
+
 
 class Activity(Base):
     __tablename__ = 'activity'
@@ -28,5 +30,7 @@ class Activity(Base):
         return '<Activity ' + str(self.id) + ' %r>' % self.type
 
     def get_dict(self):
-        return {'id': self.id, 'user_id': self.user_id, 'activity_type': self.activity_type, 'end_time': self.end_time,
+        return {'id': self.id, 'user_id': self.user_id, 'activity_type': self.activity_type,
+                'end_time_1970': (self.end_time - epoch).total_seconds(),
+                'start_time_1970': (self.start_time - epoch).total_seconds(), 'end_time': self.end_time,
                 'start_time': self.start_time}

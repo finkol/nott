@@ -6,6 +6,8 @@ from database import Base
 import datetime
 from models.user import User
 
+epoch = datetime.datetime.utcfromtimestamp(0)
+
 
 class Food(Base):
     __tablename__ = 'food'
@@ -36,8 +38,9 @@ class Food(Base):
 
     def get_dict(self):
         return dict(id=self.id, user_id=self.user_id, type=self.type, title=self.title, timestamp=self.timestamp,
-                    score=self.score, picture=self.picture, grams=float(self.grams))
+                    timestamp_1970=(self.timestamp - epoch).total_seconds(), score=self.score, picture=self.picture,
+                    grams=float(self.grams))
 
     def get_dict_without_picture(self):
         return dict(id=self.id, user_id=self.user_id, type=self.type, title=self.title, timestamp=self.timestamp,
-                    score=self.score, grams=float(self.grams))
+                    timestamp_1970=(self.timestamp - epoch).total_seconds(), score=self.score, grams=float(self.grams))

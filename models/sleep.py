@@ -6,6 +6,8 @@ from sqlalchemy.orm import relationship
 from database import Base
 from models.user import User
 
+epoch = datetime.datetime.utcfromtimestamp(0)
+
 
 class Sleep(Base):
     __tablename__ = 'sleep'
@@ -61,6 +63,7 @@ class Sleep(Base):
                 'minutes_awake': self.minutes_awake,
                 'duration': self.duration,
                 'start_time': str(self.start_time),
+                'start_time_1970': (self.start_time - epoch).total_seconds(),
                 'restless_count': self.restless_count,
                 'efficiency': self.efficiency,
                 'minutes_asleep': self.minutes_asleep,
@@ -72,14 +75,17 @@ class Sleep(Base):
                 'is_main_sleep': self.is_main_sleep,
                 'minute_data': ast.literal_eval(self.minute_data),
                 'date_of_sleep': str(self.date_of_sleep),
+                'date_of_sleep_1970': (self.date_of_sleep - epoch).total_seconds(),
                 'user_id': self.user_id}
 
     def get_data_for_daily(self):
         return {'start_time': str(self.start_time),
+                'start_time_1970': (self.start_time - epoch).total_seconds(),
                 'efficiency': self.efficiency,
                 'minutes_to_fall_asleep': self.minutes_to_fall_asleep,
                 'time_in_bed': self.time_in_bed,
                 'is_main_sleep': self.is_main_sleep,
                 'minute_data': ast.literal_eval(self.minute_data),
                 'date_of_sleep': str(self.date_of_sleep),
+                'date_of_sleep_1970': (self.date_of_sleep - epoch).total_seconds(),
                 'user_id': self.user_id}
