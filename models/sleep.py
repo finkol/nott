@@ -97,4 +97,5 @@ class Sleep(Base):
                 'time_in_bed': self.time_in_bed,
                 'is_main_sleep': self.is_main_sleep,
                 'date_of_sleep': str(self.date_of_sleep),
+                'minutes_asleep': self.minutes_asleep,
                 'user_name': self.user.user_name}
