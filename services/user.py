@@ -51,12 +51,14 @@ def get_timeline(user_name, date_str):
     for food in foods:
         food_dict = food.get_dict()
         food_dict['type'] = 'food'
+        food_dict['date'] = str(food.timestamp.date())
         food_dict['time'] = str(food.timestamp.time())
         objects_for_timeline.append(food_dict)
 
     for activity in activities:
         activity_dict = activity.get_dict()
         activity_dict['type'] = 'activity'
+        activity_dict['date'] = str(activity.start_time.strftime("%Y-%m-%d"))
         activity_dict['time'] = str(activity.start_time.strftime("%H:%M"))
         time_difference = activity.end_time - activity.start_time
         # print time_difference.total_seconds()
@@ -111,6 +113,7 @@ def export_sleep(user_name):
     for sleep in sleeps:
         dict_for_export = sleep.get_data_for_export()
         dict_for_export['time'] = str(sleep.start_time.strftime("%H:%M"))
+        dict_for_export['date'] = str(sleep.start_time.strftime("%Y-%m-%d"))
         sleep_objects.append(dict_for_export)
 
     return create_csv_string(sleep_objects, user_name+"_sleeps")
@@ -129,6 +132,7 @@ def export_food(user_name):
     for food in foods:
         dict_for_export = food.get_dict_for_export()
         dict_for_export['time'] = str(food.timestamp.time())
+        dict_for_export['date'] = str(food.timestamp.date())
         food_objects.append(dict_for_export)
 
     return create_csv_string(food_objects, user_name+"_foods")
@@ -149,6 +153,7 @@ def export_activities(user_name):
         time_difference = activity.end_time - activity.start_time
         dict_for_export['duration_seconds'] = time_difference.total_seconds()
         dict_for_export['time'] = str(activity.start_time.strftime("%H:%M"))
+        dict_for_export['date'] = str(activity.start_time.strftime("%Y-%m-%d"))
         activities_objects.append(dict_for_export)
 
     return create_csv_string(activities_objects, user_name+"_activities")
