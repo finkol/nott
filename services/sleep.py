@@ -174,8 +174,10 @@ def get_sleep_for_day(user_name, date_str):
                     'really_awake_percentage': really_awake_percentage,
                     'out_of_bed_percentage': float(
                         1.0 - asleep_percentage - awake_percentage - really_awake_percentage)}
-
-    sleep_summary = {'efficiency': float(efficiency / no_of_logs), 'date_of_sleep': date_str}
+    if no_of_logs == 0:
+        sleep_summary = {'message': 'no_records'}
+    else:
+        sleep_summary = {'efficiency': float(efficiency / no_of_logs), 'date_of_sleep': date_str}
 
     return dict(interval_objects=interval_objects, time_summary=time_summary, sleep_summary=sleep_summary)
 
