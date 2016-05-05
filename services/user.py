@@ -152,7 +152,8 @@ def export_activities(user_name):
         dict_for_export = activity.get_dict_for_export()
         time_difference = activity.end_time - activity.start_time
         dict_for_export['duration_seconds'] = time_difference.total_seconds()
-        dict_for_export['time'] = str(activity.start_time.strftime("%H:%M"))
+        dict_for_export['start_time'] = str(activity.start_time.strftime("%H:%M"))
+        dict_for_export['end_time'] = str(activity.end_time.strftime("%H:%M"))
         dict_for_export['date'] = str(activity.start_time.strftime("%Y-%m-%d"))
         activities_objects.append(dict_for_export)
 

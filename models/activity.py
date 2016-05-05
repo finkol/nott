@@ -37,5 +37,5 @@ class Activity(Base):
 
     def get_dict_for_export(self):
         return {'user_name': self.user.user_name, 'activity_type': self.activity_type,
-         'end_time': self.end_time,
-         'start_time': self.start_time}
+         'end_datetime': self.end_time,
+         'start_datetime': self.start_time}
