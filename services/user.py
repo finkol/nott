@@ -76,7 +76,7 @@ def send_notifications_if_not_records_today():
     remind_users = []
     for user in users:
         foods = db_session.query(Food).filter(Food.user_id == user.id).filter(
-            cast(Food.date_time, Date) == datetime.date.today())
+            cast(Food.timestamp, Date) == datetime.date.today())
         activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
             cast(Activity.start_time, Date) == datetime.date.today())
 

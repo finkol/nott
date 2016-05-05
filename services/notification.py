@@ -17,6 +17,6 @@ def send_notification(alert, list_of_user_ids=[]):
         if len(list_of_user_ids) > 0:
             response = requests.post('https://hideout-noti.herokuapp.com/send', headers=headers,
                                      data=json.dumps(data))
-        return response
+            return response
 
     return None

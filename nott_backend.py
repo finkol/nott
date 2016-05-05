@@ -288,6 +288,11 @@ def export_sleeps():
         user_name = request.args['user_name']
     return user_service.export_sleep(user_name)
 
+@app.route('/reminder')
+def get_reminder():
+    user_service.send_notifications_if_not_records_today()
+    return "True"
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 2600))

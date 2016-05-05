@@ -76,10 +76,13 @@ def get_sleep_for_day(user_name, date_str):
     user = db_session.query(User).filter(User.user_name == user_name).first()
     sleeps = db_session.query(Sleep).filter(Sleep.user_id == user.id).filter(Sleep.date_of_sleep == date_str)
 
+    last_data = ""
+    last_date_time = ""
+
     night_minute_interval = {}
     number_of_minutes = 0.0
     for result in perdelta_time(time(18, 0, 0), time(10, 0, 0), timedelta(minutes=1)):
-        night_minute_interval[str(result)] = "out of bed"
+        #night_minute_interval[str(result)] = "out of bed"
         number_of_minutes += 1.0
 
     sleeps_list = []
@@ -96,23 +99,40 @@ def get_sleep_for_day(user_name, date_str):
         sleeps_list.append(sleep_data)
         for minute_data in sleep_data['minute_data']:
             if minute_data['value'] == "1":
-                night_minute_interval[minute_data['dateTime']] = "asleep"
+                if last_data != "asleep":
+                    night_minute_interval[minute_data['dateTime']] = "asleep"
+                    night_minute_interval[last_date_time] = last_data
                 asleep_minutes += 1
+                last_data = "asleep"
+                last_date_time = minute_data['dateTime']
+
             elif minute_data['value'] == "2":
-                night_minute_interval[minute_data['dateTime']] = "awake"
+                if last_data != "awake":
+                    night_minute_interval[minute_data['dateTime']] = "awake"
+                    night_minute_interval[last_date_time] = last_data
                 awake_minutes += 1
+                last_data = "awake"
+                last_date_time = minute_data['dateTime']
+
             elif minute_data['value'] == "3":
-                night_minute_interval[minute_data['dateTime']] = "really awake"
+                if last_data != "really awake":
+                    night_minute_interval[minute_data['dateTime']] = "really awake"
+                    night_minute_interval[last_date_time] = last_data
                 really_awake_minutes += 1
+                last_data = "really awake"
+                last_date_time = minute_data['dateTime']
+
             end_time = minute_data['dateTime']
         no_of_logs += 1
         efficiency += sleep_data['efficiency']
         if no_of_logs == 1:
             start_time = sleep_data['start_time']
+
     asleep_percentage = float(asleep_minutes/number_of_minutes)
     awake_percentage = float(awake_minutes/number_of_minutes)
     really_awake_percentage = float(really_awake_minutes/number_of_minutes)
     start_time = start_time.split()[1]
+
     time_summary = {'asleep': minutes_to_hours_minutes(asleep_minutes),
                     'awake': minutes_to_hours_minutes(awake_minutes),
                     'really_awake': minutes_to_hours_minutes(really_awake_minutes),
