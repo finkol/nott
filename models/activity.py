@@ -27,7 +27,7 @@ class Activity(Base):
         self.end_time = end_time
 
     def __repr__(self):
-        return '<Activity ' + str(self.id) + ' %r>' % self.type
+        return '<Activity ' + str(self.id) + ' %r>' % self.activity_type
 
     def get_dict(self):
         return {'id': self.id, 'user_id': self.user_id, 'activity_type': self.activity_type,

@@ -293,6 +293,17 @@ def get_reminder():
     user_service.send_notifications_if_not_records_today()
     return "True"
 
+@app.route('/sleep_prediction')
+def get_sleep_prediction():
+    if 'user_name' in request.args:
+        user_name = request.args['user_name']
+        if 'date' in request.args:
+            date = request.args['date']
+            return jsonify(sleep_prediction=user_service.sleep_prediction(user_name, date))
+        return jsonify(sleep_prediction=user_service.sleep_prediction(user_name))
+
+    return "No user_name provided"
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 2600))
