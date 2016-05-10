@@ -8,7 +8,7 @@ from error_handling.generic_error import GenericError
 from models.sleep import Sleep
 from models.user import User
 from services.fitbit_services.fitbit_api import get_new_refresh_token
-from services.time_calculations import perdelta_time, perdelta, minutes_to_hours_minutes
+from services.time_calculations import perdelta_time, perdelta, minutes_to_hours_minutes, seconds_to_hours_minutes
 
 epoch = datetime.utcfromtimestamp(0)
 
@@ -165,6 +165,14 @@ def get_sleep_for_day(user_name, date_str):
     really_awake_percentage = float(really_awake_minutes / number_of_minutes)
     start_time = start_time.split()[1]
 
+    FMT = '%H:%M:%S'
+    tdelta = datetime.strptime(end_time, FMT) - datetime.strptime(start_time, FMT)
+    if tdelta.days < 0:
+        tdelta = timedelta(days=0,
+                           seconds=tdelta.seconds, microseconds=tdelta.microseconds)
+    print abs(tdelta.total_seconds())
+    whole_time_seconds = abs(tdelta.total_seconds())
+
     time_summary = {'asleep': minutes_to_hours_minutes(asleep_minutes),
                     'awake': minutes_to_hours_minutes(awake_minutes),
                     'really_awake': minutes_to_hours_minutes(really_awake_minutes),
@@ -172,7 +180,8 @@ def get_sleep_for_day(user_name, date_str):
                     'end_time': end_time,
                     'asleep_percentage': asleep_percentage,
                     'awake_percentage': awake_percentage,
-                    'really_awake_percentage': really_awake_percentage
+                    'really_awake_percentage': really_awake_percentage,
+                    'time_from_start_to_end': seconds_to_hours_minutes(whole_time_seconds)
                     #'out_of_bed_percentage': float(
                     #    1.0 - asleep_percentage - awake_percentage - really_awake_percentage)
                     }
