@@ -274,6 +274,13 @@ def export_activities():
         user_name = request.args['user_name']
     return user_service.export_activities(user_name)
 
+@app.route('/export_activities2')
+def export_activities2():
+    user_name = None
+    if 'user_name' in request.args:
+        user_name = request.args['user_name']
+    return user_service.export_activities_marginal(user_name)
+
 @app.route('/export_foods')
 def export_foods():
     user_name=None

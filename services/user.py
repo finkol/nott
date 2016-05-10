@@ -83,7 +83,7 @@ def send_notifications_if_not_records_today():
 
         if foods == None and activities == None:
             remind_users.append(user.id)
-            
+
     send_notification("Remember to log your children's foods and activities every day!", remind_users)
 
 
@@ -157,6 +157,30 @@ def export_activities(user_name):
         activities_objects.append(dict_for_export)
 
     return create_csv_string(activities_objects, user_name + "_activities")
+
+
+def export_activities_marginal(user_name):
+    if user_name != None:
+        user = db_session.query(User).filter(User.user_name == user_name).first()
+
+        activities = db_session.query(Activity).filter(Activity.user_id == user.id)
+    else:
+        activities = db_session.query(Activity)
+        user_name = "all"
+
+    activities_objects = []
+    for activity in activities:
+        dict_for_export = activity.get_dict_for_export()
+        time_difference = activity.end_time - activity.start_time
+        dict_for_export['duration_seconds'] = time_difference.total_seconds()
+        dict_for_export['start_time'] = str(activity.start_time.strftime("%H:%M"))
+        dict_for_export['end_time'] = str(activity.end_time.strftime("%H:%M"))
+        dict_for_export['date'] = str(activity.start_time.strftime("%Y-%m-%d"))
+        if time_difference.total_seconds() > 7200 or activity.start_time.time() >= datetime.time(19,00):
+            activities_objects.append(dict_for_export)
+
+    return create_csv_string(activities_objects, user_name + "_activities_marginal")
+
 
 
 def sleep_prediction(user_name, today_date_obj=None):
