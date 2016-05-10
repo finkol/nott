@@ -74,17 +74,16 @@ def get_timeline(user_name, date_str):
 
 def send_notifications_if_not_records_today():
     users = db_session.query(User)
-
     remind_users = []
     for user in users:
         foods = db_session.query(Food).filter(Food.user_id == user.id).filter(
-            cast(Food.timestamp, Date) == datetime.date.today())
+            cast(Food.timestamp, Date) == datetime.date.today()).first()
         activities = db_session.query(Activity).filter(Activity.user_id == user.id).filter(
-            cast(Activity.start_time, Date) == datetime.date.today())
+            cast(Activity.start_time, Date) == datetime.date.today()).first()
 
         if foods == None and activities == None:
             remind_users.append(user.id)
-
+            
     send_notification("Remember to log your children's foods and activities every day!", remind_users)
 
 
