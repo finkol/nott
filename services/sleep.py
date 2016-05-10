@@ -80,10 +80,9 @@ def get_sleep_for_day(user_name, date_str):
     last_date_time = ""
 
     night_minute_interval = {}
-    number_of_minutes = 0.0
-    for result in perdelta_time(time(18, 0, 0), time(10, 0, 0), timedelta(minutes=1)):
+
+    #for result in perdelta_time(time(18, 0, 0), time(10, 0, 0), timedelta(minutes=1)):
         # night_minute_interval[str(result)] = "out of bed"
-        number_of_minutes += 1.0
 
     sleeps_list = []
     asleep_minutes = 0
@@ -99,10 +98,12 @@ def get_sleep_for_day(user_name, date_str):
     interval_type = ""
     interval_objects = []
 
+    number_of_minutes = 0.0
     for sleep in sleeps:
         sleep_data = sleep.get_dict()
         sleeps_list.append(sleep_data)
         for minute_data in sleep_data['minute_data']:
+            number_of_minutes += 1.0
             if minute_data['value'] == "1":
                 if last_data != "asleep":
                     interval_end_time = last_date_time
@@ -171,9 +172,10 @@ def get_sleep_for_day(user_name, date_str):
                     'end_time': end_time,
                     'asleep_percentage': asleep_percentage,
                     'awake_percentage': awake_percentage,
-                    'really_awake_percentage': really_awake_percentage,
-                    'out_of_bed_percentage': float(
-                        1.0 - asleep_percentage - awake_percentage - really_awake_percentage)}
+                    'really_awake_percentage': really_awake_percentage
+                    #'out_of_bed_percentage': float(
+                    #    1.0 - asleep_percentage - awake_percentage - really_awake_percentage)
+                    }
     if no_of_logs == 0:
         sleep_summary = {'message': 'no_records'}
     else:
